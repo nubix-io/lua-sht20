@@ -1,16 +1,16 @@
 local M = {
   -- memory map
-  TEMP_REG        = 0x0001,
-  HUM_REG         = 0x0002,
-  TEMP_CORRECTION = 0x0103,
-  HUM_CORRECTION  = 0x0104
+  TEMP_REG        = 0x0000, -- 0x001
+  HUM_REG         = 0x0001, -- 0x002
+  TEMP_CORRECTION = 0x0102, -- 0x103
+  HUM_CORRECTION  = 0x0103  -- 0x104
 }
 
 function M.readHumidityRH(modbusClient)
-  local uncompensatedHumRH = M.readUncompensatedRawHumidityRH(modbusClient)
+  local uncompensatedHumRH = M.readUncompensatedHumidityRH(modbusClient)
   local data = modbusClient:readInputRegisters(M.HUM_CORRECTION, 1)
   local humCorrection = M.readShort(data[2], data[1])
-  local humRH = uncompensatedHumRH + humCorrection 
+  local humRH = uncompensatedHumRH + humCorrection
   return humRH
 end
 
@@ -36,7 +36,7 @@ function M.readTemperatureC(modbusClient)
   local uncompensatedTempC = M.readUncompensatedTemperatureC(modbusClient)
   local data = modbusClient:readInputRegisters(M.TEMP_CORRECTION, 1)
   local tempCorrection = M.readShort(data[2], data[1])
-  local tempC = uncompensatedTempC + tempCorrection 
+  local tempC = uncompensatedTempC + tempCorrection
   return tempC
 end
 
